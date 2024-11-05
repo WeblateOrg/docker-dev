@@ -39,4 +39,5 @@ RUN \
     libjpeg62-turbo-dev \
     libgirepository1.0-dev \
     patch \
+  && apt-get clean \
   && rm -rf /root/.cache /tmp/* /var/lib/apt/lists/*
