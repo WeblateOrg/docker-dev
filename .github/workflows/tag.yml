@@ -28,6 +28,6 @@ jobs:
           github.rest.git.createRef({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            ref: `refs/tags/v${ now.getFullYear() }.${ week }`,
+            ref: `refs/tags/v${ now.getFullYear() }.${ week }.0`,
             sha: context.sha
           })
