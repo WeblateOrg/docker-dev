@@ -55,7 +55,8 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
-            type=sha            
+            type=edge,branch=main
+            type=sha,format=long   
 
       - name: Docker meta (dev)
         id: dev 
@@ -73,7 +74,8 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
-            type=sha            
+            type=edge,branch=main
+            type=sha,format=long   
       
       - name: Build and push (base)
         uses: docker/build-push-action@v6
@@ -83,7 +85,9 @@ jobs:
           tags: ${{ steps.base.outputs.tags }}
           labels: ${{ steps.base.outputs.labels }}
           load: true
-      
+
+      - name: Pin base for dev
+        run: sed -i "s@FROM weblate/base:latest@FROM weblate/base:sha-${{ github.sha }}@"
       - name: Build and push (dev)
         uses: docker/build-push-action@v6
         with:
