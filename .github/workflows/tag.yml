@@ -1,8 +1,12 @@
+# Copyright © Michal Čihař <michal@weblate.org>
+#
+# SPDX-License-Identifier: MIT
+#
 name: Weekly tag
 
 on:
   schedule:
-    - cron: "0 10 * * 0"
+  - cron: 0 10 * * 0
   workflow_dispatch:
 
 permissions:
@@ -11,17 +15,17 @@ permissions:
 jobs:
   tag:
     steps:
-      - name: 🏷️ Create/update tag
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const now = Date.now();                
-            const onejan = new Date(now.getFullYear(), 0, 1);
-            /* This is not a ISO-8601 week number but works well for versioning */
-            const week = Math.ceil((((now.getTime() - onejan.getTime()) / 86400000) + onejan.getDay() + 1) / 7);
-            github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: `refs/tags/v${ now.fullYear() }.${ week }`,
-              sha: context.sha
-            })
+    - name: 🏷️ Create/update tag
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const now = Date.now();
+          const onejan = new Date(now.getFullYear(), 0, 1);
+          /* This is not a ISO-8601 week number but works well for versioning */
+          const week = Math.ceil((((now.getTime() - onejan.getTime()) / 86400000) + onejan.getDay() + 1) / 7);
+          github.rest.git.createRef({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: `refs/tags/v${ now.fullYear() }.${ week }`,
+            sha: context.sha
+          })

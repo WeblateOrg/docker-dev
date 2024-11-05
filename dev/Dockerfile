@@ -1,3 +1,7 @@
+# Copyright © Michal Čihař <michal@weblate.org>
+#
+# SPDX-License-Identifier: MIT
+
 FROM weblate/base:latest
 ARG TARGETARCH
 

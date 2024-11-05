@@ -1,3 +1,7 @@
+# Copyright © Michal Čihař <michal@weblate.org>
+#
+# SPDX-License-Identifier: MIT
+
 FROM python:3.12.7-slim-bookworm
 ARG TARGETARCH
 

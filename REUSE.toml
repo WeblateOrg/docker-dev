@@ -1,0 +1,17 @@
+# Copyright © Michal Čihař <michal@weblate.org>
+#
+# SPDX-License-Identifier: MIT
+
+SPDX-PackageDownloadLocation = "https://weblate.org/"
+SPDX-PackageName = "Weblate Base Docker Images"
+SPDX-PackageSupplier = "Michal Čihař <michal@weblate.org>"
+version = 1
+
+[[annotations]]
+SPDX-FileCopyrightText = "Michal Čihař <michal@weblate.org>"
+SPDX-License-Identifier = "MIT"
+path = [
+  ".gitignore",
+  ".pre-commit-config.yaml"
+]
+precedence = "aggregate"
