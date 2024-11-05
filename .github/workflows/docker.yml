@@ -40,7 +40,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Docker meta (base)
-        id: meta
+        id: base
         uses: docker/metadata-action@v5
         with:
           # list of Docker images to use as base name for tags
@@ -56,17 +56,9 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
             type=sha            
-      
-      - name: Build and push (base)
-        uses: docker/build-push-action@v6
-        with:
-          context: base
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
 
       - name: Docker meta (dev)
-        id: meta
+        id: dev 
         uses: docker/metadata-action@v5
         with:
           # list of Docker images to use as base name for tags
@@ -83,10 +75,18 @@ jobs:
             type=semver,pattern={{major}}
             type=sha            
       
+      - name: Build and push (base)
+        uses: docker/build-push-action@v6
+        with:
+          context: base
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.base.outputs.tags }}
+          labels: ${{ steps.base.outputs.labels }}
+      
       - name: Build and push (dev)
         uses: docker/build-push-action@v6
         with:
           context: dev
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.dev.outputs.tags }}
+          labels: ${{ steps.dev.outputs.labels }}
