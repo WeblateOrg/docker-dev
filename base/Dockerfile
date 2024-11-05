@@ -82,5 +82,7 @@ RUN \
   && apt-get update \
   && apt-get install --no-install-recommends -y postgresql-client-17 \
   && apt-get clean \
-  && curl -LsSf https://astral.sh/uv/$UV_VERSION/install.sh | env UV_INSTALL_DIR="/usr/local/bin" sh \
   && rm -rf /root/.cache /tmp/* /var/lib/apt/lists/*
+
+# Install uv
+RUN curl -LsSf https://astral.sh/uv/${UV_VERSION}/install.sh | env UV_UNMANAGED_INSTALL="/usr/local/bin" sh
