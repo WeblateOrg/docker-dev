@@ -1,0 +1,64 @@
+# Copyright © Michal Čihař <michal@weblate.org>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+# This file is maintained in https://github.com/WeblateOrg/meta/
+name: Pre-commit check
+
+on:
+  push:
+    branches-ignore:
+    - deepsource-fix-**
+    - renovate/**
+    - weblate
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/cache@v4
+      with:
+        path: ~/.cache/pre-commit
+        key: ${{ runner.os }}-pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - uses: astral-sh/setup-uv@v3
+    - name: detect PEP 735
+      id: pep735
+      run: |
+        if grep -q dependency-groups pyproject.toml ; then
+          echo "found=1" >> $GITHUB_OUTPUT
+        else
+          echo "found=0" >> $GITHUB_OUTPUT
+        fi
+    - name: pre-commit
+      if: ${{ steps.pep735.outputs.found == 1 }}
+      run: uv run --only-group pre-commit pre-commit run --all
+      env:
+        RUFF_OUTPUT_FORMAT: github
+        REUSE_OUTPUT_FORMAT: github
+    - name: Install dependencies
+      if: ${{ steps.pep735.outputs.found == 0 }}
+      run: |
+        if [ -f requirements-lint.txt ] ; then
+          uv pip install --system -r requirements-lint.txt
+        else
+          uv pip install --system $(sed -n 's/.*"\(pre-commit==\([^"]*\)\)".*/\1/p' pyproject.toml)
+        fi
+    - name: pre-commit
+      if: ${{ steps.pep735.outputs.found == 0 }}
+      run: pre-commit run --all
+      env:
+        RUFF_OUTPUT_FORMAT: github
+        REUSE_OUTPUT_FORMAT: github
+    - name: diff
+      run: git diff
+      if: always()
