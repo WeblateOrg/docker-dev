@@ -79,4 +79,5 @@ RUN \
   && curl -L https://www.postgresql.org/media/keys/ACCC4CF8.asc > /etc/apt/trusted.gpg.d/pgdg.asc \
   && apt-get update \
   && apt-get install --no-install-recommends -y postgresql-client-17 \
+  && curl -LsSf https://astral.sh/uv/install.sh | sh \
   && rm -rf /root/.cache /tmp/* /var/lib/apt/lists/*
