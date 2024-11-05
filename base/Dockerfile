@@ -44,6 +44,7 @@ ENV PATH=/app/venv/bin/:/usr/local/bin:/usr/bin:/bin
 RUN \
   export DEBIAN_FRONTEND=noninteractive \
   && apt-get update \
+  && apt-get upgrade \
   && apt-get install --no-install-recommends -y \
     nginx-light \
     ruby-licensee \
