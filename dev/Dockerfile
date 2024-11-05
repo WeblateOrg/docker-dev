@@ -14,6 +14,7 @@ LABEL org.opencontainers.image.licenses="MIT"
 
 RUN \
   export DEBIAN_FRONTEND=noninteractive \
+  && apt-get update \
   && apt-get install --no-install-recommends -y \
     pkg-config \
     make \
@@ -33,4 +34,5 @@ RUN \
     zlib1g-dev \
     libjpeg62-turbo-dev \
     libgirepository1.0-dev \
-    patch
+    patch \
+  && rm -rf /root/.cache /tmp/* /var/lib/apt/lists/*
