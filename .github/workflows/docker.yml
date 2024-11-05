@@ -87,7 +87,7 @@ jobs:
           load: true
 
       - name: Pin base for dev
-        run: sed -i "s@FROM weblate/base:latest@FROM weblate/base:sha-${{ github.sha }}@"
+        run: sed -i "s@FROM weblate/base:latest@FROM weblate/base:sha-${{ github.sha }}@" dev/Dockerfile
       - name: Build and push (dev)
         uses: docker/build-push-action@v6
         with:
