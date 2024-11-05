@@ -5,6 +5,8 @@
 FROM python:3.12.7-slim-bookworm
 ARG TARGETARCH
 
+ENV UV_VERSION=0.4.30
+
 LABEL name="Weblate Base"
 LABEL maintainer="Michal Čihař <michal@cihar.com>"
 LABEL org.opencontainers.image.url="https://weblate.org/"
@@ -80,5 +82,5 @@ RUN \
   && apt-get update \
   && apt-get install --no-install-recommends -y postgresql-client-17 \
   && apt-get clean \
-  && curl -LsSf https://astral.sh/uv/install.sh | sh \
+  && curl -LsSf https://astral.sh/uv/$UV_VERSION/install.sh | env UV_INSTALL_DIR="/usr/local/bin" sh \
   && rm -rf /root/.cache /tmp/* /var/lib/apt/lists/*
