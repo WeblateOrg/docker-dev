@@ -92,6 +92,8 @@ jobs:
         tags: ${{ steps.base.outputs.tags }}
         labels: ${{ steps.base.outputs.labels }}
         platforms: linux/amd64,linux/arm64
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
 
       # This build should be cached, but needed to load
       # image for dev container as load does not work with multiple
@@ -111,3 +113,5 @@ jobs:
         tags: ${{ steps.dev.outputs.tags }}
         labels: ${{ steps.dev.outputs.labels }}
         platforms: linux/amd64,linux/arm64
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
