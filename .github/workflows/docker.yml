@@ -7,7 +7,7 @@ on:
     branches-ignore:
     - renovate/**
     tags:
-    - '*'
+    - 'v*'
   pull_request:
 
 jobs:
@@ -39,7 +39,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: base: Docker meta
+      - name: Docker meta (base)
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -57,7 +57,7 @@ jobs:
             type=semver,pattern={{major}}
             type=sha            
       
-      - name: base: Build and push
+      - name: Build and push (base)
         uses: docker/build-push-action@v6
         with:
           context: base
@@ -65,7 +65,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: dev: Docker meta
+      - name: Docker meta (dev)
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -83,7 +83,7 @@ jobs:
             type=semver,pattern={{major}}
             type=sha            
       
-      - name: dev: Build and push
+      - name: Build and push (dev)
         uses: docker/build-push-action@v6
         with:
           context: dev
