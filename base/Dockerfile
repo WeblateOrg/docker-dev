@@ -95,4 +95,4 @@ RUN curl -LsSf https://astral.sh/uv/${UV_VERSION}/install.sh | env UV_UNMANAGED_
 RUN export UV_NO_CACHE=1 && \
     uv venv /opt/supervisor && \
     source /opt/supervisor/bin/activate && \
-    uv install supervisor https://github.com/nijel/supervisor-stdout/archive/c909c1a1ddabaf679dc2eaecb3b8f5ad6bef467a.zip
+    uv pip install supervisor https://github.com/nijel/supervisor-stdout/archive/c909c1a1ddabaf679dc2eaecb3b8f5ad6bef467a.zip
