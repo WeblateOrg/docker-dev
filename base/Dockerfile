@@ -44,7 +44,7 @@ ENV HOME=/home/weblate
 # Avoid Python buffering stdout and delaying logs
 ENV PYTHONUNBUFFERED=1
 # Add virtualenv to path
-ENV PATH=/app/venv/bin:/opt/supervisor/bin:/usr/local/bin:/usr/bin:/bin
+ENV PATH=/app/venv/bin:/opt/tools/bin:/usr/local/bin:/usr/bin:/bin
 
 # Install dependencies
 # hadolint ignore=DL3008,DL3013,SC2046,DL3003
@@ -92,7 +92,8 @@ RUN curl -LsSf https://astral.sh/uv/${UV_VERSION}/install.sh | env UV_UNMANAGED_
 # - https://github.com/coderanger/supervisor-stdout/pull/12
 # - https://github.com/coderanger/supervisor-stdout/pull/18
 # - https://github.com/coderanger/supervisor-stdout/pull/20
+RUN export UV_NO_CACHE=1 && uv venv /opt/tools
+COPY --link requirements.txt /opt/tools/src/requirements.txt
 RUN export UV_NO_CACHE=1 && \
-    uv venv /opt/supervisor && \
-    source /opt/supervisor/bin/activate && \
-    uv pip install supervisor https://github.com/nijel/supervisor-stdout/archive/c909c1a1ddabaf679dc2eaecb3b8f5ad6bef467a.zip
+    source /opt/tools/bin/activate && \
+    uv pip install -r /opt/tools/src/requirements.txt
