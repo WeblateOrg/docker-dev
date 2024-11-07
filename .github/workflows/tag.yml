@@ -19,7 +19,7 @@ jobs:
     - name: 🏷️ Create/update tag
       uses: actions/github-script@v7
       with:
-        github-token: ${{ secrets.TAG_PAT }}
+        github-token: ${{ secrets.WEBLATE_CI_TOKEN }}
         script: |
           const now = new Date;
           const onejan = new Date(now.getFullYear(), 0, 1);
