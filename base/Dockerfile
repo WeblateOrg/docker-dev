@@ -88,10 +88,7 @@ RUN \
 # Install uv
 RUN curl -LsSf https://astral.sh/uv/${UV_VERSION}/install.sh | env UV_UNMANAGED_INSTALL="/usr/local/bin" sh
 
-# Install supervisor and patched supervisor-stdout with following fixes:
-# - https://github.com/coderanger/supervisor-stdout/pull/12
-# - https://github.com/coderanger/supervisor-stdout/pull/18
-# - https://github.com/coderanger/supervisor-stdout/pull/20
+# Install supervisor and gunicorn to /opt/tools
 RUN export UV_NO_CACHE=1 && uv venv /opt/tools
 COPY --link requirements.txt /opt/tools/src/requirements.txt
 RUN export UV_NO_CACHE=1 && \
