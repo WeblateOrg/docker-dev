@@ -15,21 +15,98 @@ on:
   pull_request:
 
 jobs:
-  docker:
+  base-build:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        architecture:
+        - amd64
+        - arm64
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    - name: Docker meta
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+          # list of Docker images to use as base name for tags
+        images: |
+          weblate/base
+          ghcr.io/weblateorg/base
+         # generate Docker tags based on the following events/attributes
+        tags: |
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+          type=semver,pattern={{major}}
+          type=edge,branch=main
+          type=sha,format=long
+    - name: Build
+      id: build
+      uses: docker/build-push-action@v6
+      with:
+        context: base
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        platforms: linux/${{ matrix.architecture }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        outputs: type=docker,dest=base-${{ matrix.architecture }}.tar
+    - uses: actions/upload-artifact@v4
+      with:
+        path: base-${{ matrix.architecture }}.tar
+        name: base-${{ matrix.architecture }}
+
+  base-publish:
+    needs:
+    - base-build
     permissions:
       packages: write
     runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v4
-
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v3
-
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
+    - name: Docker meta
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+          # list of Docker images to use as base name for tags
+        images: |
+          weblate/base
+          ghcr.io/weblateorg/base
+         # generate Docker tags based on the following events/attributes
+        tags: |
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+          type=semver,pattern={{major}}
+          type=edge,branch=main
+          type=sha,format=long
 
-    - name: Pin base for dev
-      run: sed -i "s@FROM weblate/base:latest@FROM weblate/base:sha-${{ github.sha }}@" dev/Dockerfile
+    - uses: actions/download-artifact@v4
+      with:
+        pattern: base-*
+        merge-multiple: true
+        path: images
+
+    - name: Load containers
+      working-directory: images
+      run: |
+        ls
+        for arch in amd64 arm64 ; do
+          docker image load --input "base-$arch.tar"
+          docker image tag weblate/base:${{ steps.meta.outputs.version }} weblate/base:${{ steps.meta.outputs.version }}-$arch
+          docker image rm weblate/base:${{ steps.meta.outputs.version }}
+        done
+        docker image ls --digests
+
+    - name: Create manifest list and push
+      working-directory: images
+      run: |
+        docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") weblate/base@${{ steps.meta.outputs.version }}-amd64 weblate/base@${{ steps.meta.outputs.version }}-arm64
+
+    - name: Inspect image
+      run: docker buildx imagetools inspect weblate/base:${{ steps.meta.outputs.version }}
 
     - name: Login to Docker Hub
       if: github.event_name != 'pull_request'
@@ -46,24 +123,32 @@ jobs:
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Docker meta (base)
-      id: base
-      uses: docker/metadata-action@v5
+    - name: Push to Docker Hub
+      if: github.event_name != 'pull_request'
+      run: docker manifest push weblate/base:${{ steps.meta.outputs.version }}
+
+    - name: Push to GitHub
+      if: github.event_name != 'pull_request'
+      run: docker manifest push ghcr.io/weblate/base:${{ steps.meta.outputs.version }}
+
+
+  docker:
+    permissions:
+      packages: write
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/upload-artifact@v4
       with:
-          # list of Docker images to use as base name for tags
-        images: |
-          weblate/base
-          ghcr.io/weblateorg/base
-         # generate Docker tags based on the following events/attributes
-        tags: |
-          type=schedule
-          type=ref,event=branch
-          type=ref,event=pr
-          type=semver,pattern={{version}}
-          type=semver,pattern={{major}}.{{minor}}
-          type=semver,pattern={{major}}
-          type=edge,branch=main
-          type=sha,format=long
+        path: base.tar
+        name: base
+
+    - name: Load (base)
+      run: docker image load --input base.tar.gz
+
+    - name: Pin base for dev
+      run: sed -i "s@FROM weblate/base:latest@FROM weblate/base:sha-${{ github.sha }}@" dev/Dockerfile
 
     - name: Docker meta (dev)
       id: dev
@@ -75,37 +160,11 @@ jobs:
           ghcr.io/weblateorg/dev
          # generate Docker tags based on the following events/attributes
         tags: |
-          type=schedule
-          type=ref,event=branch
-          type=ref,event=pr
           type=semver,pattern={{version}}
           type=semver,pattern={{major}}.{{minor}}
           type=semver,pattern={{major}}
           type=edge,branch=main
           type=sha,format=long
-
-    - name: Build and push (base)
-      uses: docker/build-push-action@v6
-      with:
-        context: base
-        push: ${{ github.event_name != 'pull_request' }}
-        tags: ${{ steps.base.outputs.tags }}
-        labels: ${{ steps.base.outputs.labels }}
-        platforms: linux/amd64,linux/arm64
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
-
-      # This build should be cached, but needed to load
-      # image for dev container as load does not work with multiple
-      # platforms
-    - name: Build and load (base)
-      uses: docker/build-push-action@v6
-      with:
-        context: base
-        tags: ${{ steps.base.outputs.tags }}
-        labels: ${{ steps.base.outputs.labels }}
-        load: true
-        cache-from: type=gha
 
     - name: Build and push (dev)
       uses: docker/build-push-action@v6
