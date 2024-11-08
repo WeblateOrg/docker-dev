@@ -102,8 +102,10 @@ jobs:
       uses: docker/build-push-action@v6
       with:
         context: base
+        tags: ${{ steps.base.outputs.tags }}
         labels: ${{ steps.base.outputs.labels }}
         load: true
+        cache-from: type=gha
 
     - name: Build and push (dev)
       uses: docker/build-push-action@v6
