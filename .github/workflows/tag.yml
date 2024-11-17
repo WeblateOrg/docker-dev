@@ -21,7 +21,8 @@ jobs:
       with:
         github-token: ${{ secrets.WEBLATE_CI_TOKEN }}
         script: |
-          console.log(github.rest.users.getAuthenticated());
+          const result = await github.rest.users.getAuthenticated();
+          console.log(result);
           const now = new Date;
           const onejan = new Date(now.getFullYear(), 0, 1);
           /* This is not a ISO-8601 week number but works well for versioning */
