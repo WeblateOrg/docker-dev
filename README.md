@@ -4,6 +4,6 @@ Copyright © Michal Čihař <michal@weblate.org>
 SPDX-License-Identifier: MIT
 -->
 
-# docker-base
+# docker-dev
 
-Base image for Weblate Docker container
+Development image for Weblate Docker container
