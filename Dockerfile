@@ -16,6 +16,7 @@ LABEL org.opencontainers.image.title="Weblate"
 LABEL org.opencontainers.image.description="A web-based continuous localization system with tight version control integration"
 LABEL org.opencontainers.image.licenses="MIT"
 
+# hadolint ignore=DL3008
 RUN \
   export DEBIAN_FRONTEND=noninteractive \
   && apt-get update \
