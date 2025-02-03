@@ -38,7 +38,7 @@ RUN \
     libpq-dev \
     zlib1g-dev \
     libjpeg62-dev \
-    libgirepository1.0-dev \
+    libgirepository-2.0-dev \
     patch \
   && apt-get clean \
   && rm -rf /root/.cache /tmp/* /var/lib/apt/lists/*
