@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
-FROM weblate/base:2025.8.0
+FROM weblate/base:2025.9.0
 ARG TARGETARCH
 
 LABEL name="Weblate Dev"
