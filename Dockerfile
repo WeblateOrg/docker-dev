@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
-FROM weblate/base:2025.12.0
+FROM weblate/base:2025.12.1
 ARG TARGETARCH
 
 LABEL name="Weblate Dev"
@@ -37,7 +37,7 @@ RUN \
     libffi-dev \
     libpq-dev \
     zlib1g-dev \
-    libjpeg62-turbo-dev \
+    libjpeg62-dev \
     libgirepository1.0-dev \
     patch \
   && apt-get clean \
