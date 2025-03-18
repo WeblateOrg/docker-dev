@@ -37,7 +37,7 @@ RUN \
     libffi-dev \
     libpq-dev \
     zlib1g-dev \
-    libjpeg62-turbo-dev \
+    libjpeg62-dev \
     libgirepository1.0-dev \
     patch \
   && apt-get clean \
