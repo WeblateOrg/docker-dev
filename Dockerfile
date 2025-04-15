@@ -40,5 +40,7 @@ RUN \
     libjpeg62-dev \
     libgirepository-2.0-dev \
     patch \
+    gcc \
+    g++ \
   && apt-get clean \
   && rm -rf /root/.cache /tmp/* /var/lib/apt/lists/*
