@@ -29,7 +29,6 @@ RUN \
     liblz4-dev \
     libzstd-dev \
     libxxhash-dev \
-    libmariadb-dev \
     libxmlsec1-dev \
     libsasl2-dev \
     libldap2-dev \
