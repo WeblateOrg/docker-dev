@@ -23,7 +23,6 @@ RUN \
   && apt-get install --no-install-recommends -y \
     pkg-config \
     make \
-    libcairo2-dev \
     libxml2-dev \
     libacl1-dev \
     liblz4-dev \
@@ -37,7 +36,6 @@ RUN \
     libpq-dev \
     zlib1g-dev \
     libjpeg62-dev \
-    libgirepository-2.0-dev \
     patch \
     gcc \
     g++ \
