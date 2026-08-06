@@ -3,7 +3,6 @@ Copyright © Michal Čihař <michal@weblate.org>
 
 SPDX-License-Identifier: MIT
 -->
-
 <a href="https://weblate.org/"><img alt="Weblate" src="https://s.weblate.org/cdn/Logo-Darktext-borders.png" height="80px" /></a>
 
 **Weblate is libre software web-based continuous localization system,
