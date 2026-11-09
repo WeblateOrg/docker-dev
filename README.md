@@ -16,3 +16,22 @@ Development image for Weblate Docker container
 </p>
 
 Part of [Weblate](https://weblate.org/) — a privacy-respecting localization platform built on open-source foundations.
+
+## Publishing releases
+
+A change to the pinned `weblate/base` version or digest on `main` starts a release after the Renovate update merges. **Run workflow** in the **Release** workflow also allows manual releases. Dev versions use their own patch sequence; they do not have to match the base version.
+
+The workflow selects the next `vYEAR.WEEK.PATCH` version, builds the selected
+commit for amd64 and arm64, and publishes images to Docker Hub and GHCR. Only
+then does it create the annotated Git tag and GitHub release. The workflow
+summary records the source commit and published image digest. Dev releases also
+record their pinned base image.
+
+Failed checks or image publication do not create a Git tag or GitHub release.
+A registry push can succeed before another fails; rerun failed jobs to complete
+the same version. Finalization can also be retried after tag creation without
+recreating the tag. Release runs are serialized to prevent version collisions.
+
+Branch, pull-request, daily, and manual image builds remain separate from
+versioned releases. Run `node --test tests/release.test.cjs` to check the release
+logic locally.
