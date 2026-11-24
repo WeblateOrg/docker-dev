@@ -19,13 +19,18 @@ Part of [Weblate](https://weblate.org/) — a privacy-respecting localization pl
 
 ## Publishing releases
 
-A change to the pinned `weblate/base` version or digest on `main` starts a release after the Renovate update merges. **Run workflow** in the **Release** workflow also allows manual releases. Dev versions use their own patch sequence; they do not have to match the base version.
+A change to the pinned `weblate/base` version or digest on `main` starts a release after the Renovate update merges. **Run workflow** in the **Release** workflow also allows manual releases. Dev versions use their own release sequence and can differ from the base version.
 
-The workflow selects the next `vYEAR.WEEK.PATCH` version, builds the selected
-commit for amd64 and arm64, and publishes images to Docker Hub and GHCR. Only
-then does it create the annotated Git tag and GitHub release. The workflow
-summary records the source commit and published image digest. Dev releases also
-record their pinned base image.
+Before January 1, 2027 at 00:00 UTC, Git release tags use `vYEAR.WEEK.PATCH`.
+Starting at that cutoff, they use `vYEAR.MONTH.RELEASE`, with UTC months numbered
+`1` through `12`. The release number starts at `0` each month and increments with
+each release. Full Docker image tags use the same version without the `v` prefix.
+
+The workflow selects the next version, builds the selected commit for amd64 and
+arm64, and publishes images to Docker Hub and GHCR. Only then does it create the
+annotated Git tag and GitHub release. The workflow summary records the source
+commit and published image digest. Dev releases also record their pinned base
+image.
 
 Failed checks or image publication do not create a Git tag or GitHub release.
 A registry push can succeed before another fails; rerun failed jobs to complete
